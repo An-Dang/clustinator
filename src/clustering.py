@@ -23,30 +23,73 @@ class Clustering:
 
         return DBSCAN(eps=1.5, min_samples=10).fit(self.X)
 
-    def uniqueLabels(self):
+    def unique_labels(self):
         labels = self.dbscan().labels_
-        return np.unique(labels, return_counts=True)
+        unique, counts = np.unique(labels, return_counts=True)
+        return unique, counts
 
+    def compare_results(self):
+        unique, counts = self.unique_labels()
+        # represent the cluster results as dict
+        result = dict(zip(unique, counts))
+
+        return result
 
 # main-method
 if __name__ == '__main__':
     # Input data
     input = Input(sessions_file)
-    # Slice sessions @sessions(None, None)
-    session = input.sessions(None, 200)
-    
-    print('load data done', datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
 
-    # Compute transition matrix
-    mc = MarkovChain(session, states)
-    mc = mc.transition_matrix()
+    start, stop = None, 1000
+    past_step_size = 1000
+    steps = 5
+    for _ in enumerate(range(steps)):
+        if _ == (0, 0):
+            pass
+        else:
+            start += 1000
+            stop += 1000
 
-    print('matrix done', datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
-    print('start clustering \n')
+        # Slice sessions @sessions(None, None)
+        current_step = input.sessions(start, stop)
 
-    # DBSCAN
-    dbscan = Clustering(mc)
-    #clustering = dbscan.uniqueLabels()
-    print(dbscan.uniqueLabels())
+        if _ >= (1, 1):
+            past_start = (start-past_step_size)
+            past_stop = (stop-past_step_size)
+            past_step = input.sessions(past_start, past_stop)
 
-    print("\nEnd clustering", datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
+            print('load data done', datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
+
+
+            """
+            To Do's:
+            Change the parameter names!!!
+            """
+            # Compute transition matrix
+            mc = MarkovChain(session, states)
+            mc = mc.transition_matrix()
+
+            print('matrix done', datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
+            print('start clustering \n')
+
+            # DBSCAN
+            dbscan = Clustering(mc)
+
+            print("\nEnd clustering", datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
+
+            """# Compute the clustering compromise
+            result1 = dbscan.compare_results()
+            result2 = dbscan.compare_results()
+            
+            diff_dict = {}
+            tmp = []
+            
+            for key in result1:
+                tmp.append(key)
+                if key in result2:
+                    diff_dict[key] = (result1[key] - result2[key])
+        
+            if len(tmp) != len(result2):
+                for key in result2:
+                    if key not in result1.keys():
+                        diff_dict[key] = result2[key]"""
