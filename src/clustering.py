@@ -46,7 +46,7 @@ if __name__ == '__main__':
 
     # DBSCAN
     dbscan = Clustering(mc)
-    clustering = dbscan.uniqueLabels()
-    print(clustering)
+    #clustering = dbscan.uniqueLabels()
+    print(dbscan.uniqueLabels())
 
     print("\nEnd clustering", datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))

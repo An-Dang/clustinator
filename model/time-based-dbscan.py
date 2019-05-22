@@ -15,6 +15,7 @@ states = ["INITIAL","login","View_Items","home","logout","View_Items_quantity","
 PATH = "../data/raw/"
 sessions_file = (PATH+'sessions.dat')
 
+
 def session_request_dict(sessions_file):
     s_r_dict = {}
     # Dict of sessions
