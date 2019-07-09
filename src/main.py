@@ -1,6 +1,6 @@
-import numpy as np
 import datetime
 import time
+from datetime import datetime
 
 from input import Input
 from markovchain import MarkovChain
@@ -20,9 +20,10 @@ if __name__ == '__main__':
 
     #TODO: Summary for time, reuse past clustering
 
+    start_time = datetime.now()
     # Input data
     input = Input(sessions_file)
-    print('load data done', datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
+    print('load data done', datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
     start, stop = 0, 1000
     step_size = 500
     iteration = 5
@@ -51,14 +52,14 @@ if __name__ == '__main__':
             mc_past = MarkovChain(past_step, states)
             mc_past = mc_past.csr_sparse_matrix()
 
-            print('matrix done', datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
+            print('matrix done', datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
             print('start clustering')
 
             # DBSCAN
             dbscan_next = Clustering(mc_next)
             dbscan_past = Clustering(mc_past)
 
-            print("End clustering", datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'), '\n')
+            print("End clustering", datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'), '\n')
 
             # Compute the clustering compromise
             result1 = dbscan_next.compare_results()
@@ -79,3 +80,6 @@ if __name__ == '__main__':
                         diff_dict[key] = result2[key]
             print(diff_dict)
             break
+
+    end_time = datetime.now()
+    print('Duration: {}'.format(end_time - start_time))
