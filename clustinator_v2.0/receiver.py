@@ -1,5 +1,5 @@
 import pika
-from main import start
+from main import Main
 
 
 class Receiver:
@@ -12,11 +12,11 @@ class Receiver:
         result = channel.queue_declare("continuity.clustinator.task.clustinator.cluster")
         queue_name = result.method.queue
         channel.queue_bind(queue=queue_name,
-                           exchange='continuity.task.clustinator.cluster',routing_key='#')
+                           exchange='continuity.task.clustinator.cluster', routing_key='#')
 
         def callback(ch, method, properties, body):
             print(" [x] %r:%r" % (method.routing_key, body))
-            start(body)
+            Main(body).start()
 
         channel.basic_consume(
             queue=queue_name, on_message_callback=callback, auto_ack=True)
