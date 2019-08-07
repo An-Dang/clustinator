@@ -16,3 +16,7 @@ poc/src/__pycache__/
 \.idea/
 
 clustinator/__pycache__/
+
+clustinator/analysis/__pycache__/
+
+poc/src/analysis/__pycache__/

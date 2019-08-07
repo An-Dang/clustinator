@@ -11,15 +11,17 @@ sessions_file = (PATH+'sessions.dat')
 
 
 class Clustering:
-    def __init__(self, X):
+    def __init__(self, X, eps, min_samples):
         """
         Class for the DBSCAN clustering algorithm with sklearn.
         :param X: Input data for the clustering
         """
         self.X = X
+        self.eps = eps
+        self.min_samples = min_samples
 
     def dbscan(self):
-        return DBSCAN(eps=1.5, min_samples=10).fit(self.X)
+        return DBSCAN(eps=self.eps, min_samples=self.min_samples).fit(self.X)
 
     def unique_labels(self):
         labels = self.dbscan().labels_
