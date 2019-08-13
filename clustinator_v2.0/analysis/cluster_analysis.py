@@ -43,7 +43,7 @@ class Cluster_analysis:
             tmp = [second_list_dict[min_point_dict[min(sum_mean_vector_list)][1]]]
             tmp.append(value)
 
-            cluster_mean_history[index] = tmp
+            cluster_mean_history[str(index)] = tmp
 
         return cluster_mean_history
 

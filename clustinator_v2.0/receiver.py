@@ -15,9 +15,16 @@ class Receiver:
                            exchange='continuity.task.clustinator.cluster', routing_key='#')
 
         def callback(ch, method, properties, body):
-            print(" [x] %r:%r" % (method.routing_key, body))
+            print(" [x] %r" % (method.routing_key)) #, body))
             Main(body).start()
+            """print(type(body))
+            with open('test.txt', 'w') as f:
+                f.write(str(body))"""
 
         channel.basic_consume(
             queue=queue_name, on_message_callback=callback, auto_ack=True)
         channel.start_consuming()
+
+
+if __name__ == '__main__':
+    Receiver()

@@ -1,6 +1,6 @@
-import re
+import json
 import pandas as pd
-from more_itertools import unique_everseen
+
 
 class Input:
 
@@ -14,38 +14,43 @@ class Input:
         :param slice_to: end slice to - int
         :return: The whole dataframe or sliced dataframe and the states.
         """
-        df = pd.read_json(self.sessions_file)
-        INITIAL = 'INITIAL'
+        data = json.loads(self.sessions_file)
+        INITIAL = 'INITIAL*'
         end_sign = '$'
         s_r_dict = {}
-        states = []
 
-        for sessions in df['sessions']:
+        for sessions in data['sessions']:
             tmp_list = []
             key = sessions['unique-id']
-            value = sessions['requests'][0]['endpoint']
             for value in sessions['requests']:
                 tmp_list.append(value['endpoint'])
-                states.append(value['endpoint'])
             s_r_dict[key] = tmp_list
 
-        if len(states) > len(tmp_list):
-            states = list(unique_everseen(states + tmp_list))
-        else:
-            states = list(unique_everseen(tmp_list + states))
+        states = data['states']
 
-        states.insert(0, INITIAL)
-        states.append(end_sign)
         return s_r_dict, states
 
     def cluster_param(self):
-        df = pd.read_json(self.sessions_file)
-        epsilon = df.loc[[0], ['epsilon']].get_values()[0][0]
-        min_samples = df.loc[[0], ['min-sample-size']].get_values()[0][0]
+        data = json.loads(self.sessions_file)
+        cluster_param = ['epsilon', 'min-sample-size']
+        params = []
+        for param in cluster_param:
+            params.append(data[param])
+        epsilon = params[0]
+        min_samples = params[1]
         return epsilon, min_samples
 
     def get_header(self):
-        df = pd.read_json(self.sessions_file)
-        df = df[['app-id', 'version', 'tailoring', 'min-sample-size', 'start-micros',
-                 'interval-start-micros', 'end-micros']].to_dict('r')[0]
-        return df
+        data = json.loads(self.sessions_file)
+        header_dict = {}
+        header_list = ['app-id', 'version', 'tailoring', 'start-micros',
+                       'interval-start-micros', 'end-micros']
+        for header in header_list:
+            for k, v in data.items():
+                if k == header:
+                    header_dict[k] = v
+        return header_dict
+
+    def get_prev_markov_chain(self):
+        data = json.loads(self.sessions_file)
+        return data['previous-markov-chains']

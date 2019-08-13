@@ -13,11 +13,6 @@ class Main:
         self.sessions_file = sessions_file
 
     def start(self):
-        """
-        TODO: LABEL 1 mitgeben!
-        :return:
-        """
-
         start_time = datetime.now()
         # Input data
         data_input = Input(self.sessions_file)
@@ -42,17 +37,16 @@ class Main:
         """
         TODO: Add loading old session here!
         """
+        prev_markov_chains = data_input.get_prev_markov_chain()
         first_dict = {}
         load_labels = 0
-        # Backprop
 
+        # Backprop
         cluster_dict = dbscan.cluster_dict(labels, markov_chain)
 
         second_list = dbscan.list_cluster(cluster_dict, load_labels, labels)
 
         cluster_mean = ca(first_dict, second_list).cluster_backprob()
-
-        #print(cluster_mean)
 
         end_time = datetime.now()
 
