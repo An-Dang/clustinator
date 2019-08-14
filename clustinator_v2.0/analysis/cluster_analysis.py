@@ -35,14 +35,12 @@ class Cluster_analysis:
             ]
 
             # Labeling the new cluster points to the shifting cluster
-            cluster_mean_history[min_point_dict[min(sum_mean_vector_list)][0]] = second_list_dict[
+            cluster_mean_history[str(min_point_dict[min(sum_mean_vector_list)][0])] = second_list_dict[
                 value_subtraction_sum_dict[min(sum_mean_vector_list)][1]
             ]
 
             # No. of cluster with corresponding clusterpoints
-            tmp = [second_list_dict[min_point_dict[min(sum_mean_vector_list)][1]]]
-            tmp.append(value)
-
+            tmp = second_list_dict[min_point_dict[min(sum_mean_vector_list)][1]]
             cluster_mean_history[str(index)] = tmp
 
         return cluster_mean_history

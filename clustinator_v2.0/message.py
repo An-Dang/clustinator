@@ -8,6 +8,6 @@ class Message:
         self.cluster_mean = cluster_mean
 
     def build_json(self):
-        self.header['mean-markov-chains'] = [self.cluster_mean]
+        self.header['mean-markov-chains'] = self.cluster_mean
 
         return json.dumps(self.header)

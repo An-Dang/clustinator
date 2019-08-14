@@ -1,5 +1,6 @@
 import time
 from datetime import datetime
+import numpy as np
 
 from input import Input
 from markovchain import MarkovChain
@@ -34,27 +35,34 @@ class Main:
         print("Cluster-Infos:",unique, counts, labels)
         print("End clustering", datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
 
-        """
-        TODO: Add loading old session here!
-        """
-        prev_markov_chains = data_input.get_prev_markov_chain()
-        first_dict = {}
-        load_labels = 0
+        # Previouse data
+        #prev_markov_chains = data_input.get_prev_markov_chain()
+        try:
+            prev_markov_chains = data_input.get_prev_markov_chain()
+            first_dict = {int(k): v for k, v in prev_markov_chains.items()}
+            load_labels = np.array(first_dict.keys())
 
-        # Backprop
-        cluster_dict = dbscan.cluster_dict(labels, markov_chain)
+            # Backprop
+            cluster_dict = dbscan.cluster_dict(labels, markov_chain)
 
-        second_list = dbscan.list_cluster(cluster_dict, load_labels, labels)
+            second_list = dbscan.list_cluster(cluster_dict, labels, load_labels)
 
-        cluster_mean = ca(first_dict, second_list).cluster_backprob()
+            cluster_mean = ca(first_dict, second_list).cluster_backprob()
 
-        end_time = datetime.now()
+            end_time = datetime.now()
 
-        print('Duration: {}'.format(end_time - start_time))
+            print('Duration: {}'.format(end_time - start_time))
 
-        # Producer
-        message = Message(data_input.get_header(), cluster_mean).build_json()
-        Producer(message)
+            # Producer
+            cluster_mean = {k: v.tolist() for k, v in cluster_mean.items()}
+            message = Message(data_input.get_header(), cluster_mean).build_json()
+            Producer(message)
+        except AttributeError:
+            cluster_dict = dbscan.cluster_dict(labels, markov_chain)
+            first_cluster = dbscan.first_cluster(cluster_dict, labels)
+            first_cluster = {k: v.tolist() for k, v in first_cluster.items()}
+            message = Message(data_input.get_header(), first_cluster).build_json()
+            Producer(message)
 
 if __name__ == '__main__':
     # Data imports
