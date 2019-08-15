@@ -79,19 +79,21 @@ class Clustering:
 
         return cluster_list
 
-    def first_cluster(self, cluster_dict_, labels_next,):
+    def first_cluster(self, cluster_dict_, labels_next):
         result = {}
         cluster_list = []
 
         for cluster_index, value in enumerate(np.unique(labels_next)):
+            print(cluster_index, value)
             tmp = []
             for item in cluster_dict_:
                 for k, v in item.items():
-                    if k == cluster_index:
+                    if k == value:
                         tmp.append(v.tolist())
             cluster_list.append(np.mean(tmp, axis=0))
 
         for index, value in enumerate(cluster_list):
-            result[str(index)] = value
+            for value1 in np.unique(labels_next):
+                result[str(value1)] = value
 
         return result

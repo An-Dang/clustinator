@@ -15,8 +15,6 @@ class Input:
         :return: The whole dataframe or sliced dataframe and the states.
         """
         data = json.loads(self.sessions_file)
-        INITIAL = 'INITIAL*'
-        end_sign = '$'
         s_r_dict = {}
 
         for sessions in data['sessions']:
@@ -54,3 +52,7 @@ class Input:
     def get_prev_markov_chain(self):
         data = json.loads(self.sessions_file)
         return data['previous-markov-chains']
+
+    def get_app_id(self):
+        data = json.loads(self.sessions_file)
+        return data['app-id']

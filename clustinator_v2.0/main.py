@@ -41,6 +41,8 @@ class Main:
             prev_markov_chains = data_input.get_prev_markov_chain()
             first_dict = {int(k): v for k, v in prev_markov_chains.items()}
             load_labels = np.array(first_dict.keys())
+            header = data_input.get_header()
+            app_id = data_input.get_app_id()
 
             # Backprop
             cluster_dict = dbscan.cluster_dict(labels, markov_chain)
@@ -49,23 +51,25 @@ class Main:
 
             cluster_mean = ca(first_dict, second_list).cluster_backprob()
 
-            end_time = datetime.now()
-
-            print('Duration: {}'.format(end_time - start_time))
-
             # Producer
             cluster_mean = {k: v.tolist() for k, v in cluster_mean.items()}
-            message = Message(data_input.get_header(), cluster_mean).build_json()
-            Producer(message)
+            message = Message(header, cluster_mean, states).build_json()
+            Producer(message, app_id)
         except AttributeError:
+            header = data_input.get_header()
+            app_id = data_input.get_app_id()
             cluster_dict = dbscan.cluster_dict(labels, markov_chain)
             first_cluster = dbscan.first_cluster(cluster_dict, labels)
+
             first_cluster = {k: v.tolist() for k, v in first_cluster.items()}
-            message = Message(data_input.get_header(), first_cluster).build_json()
-            Producer(message)
+            message = Message(header, first_cluster, states).build_json()
+            Producer(message, app_id)
+
+        end_time = datetime.now()
+        print('Duration: {}'.format(end_time - start_time))
 
 if __name__ == '__main__':
     # Data imports
     PATH = "../poc/data/new_data/"
-    sessions_file = (PATH + 'data.json')
+    sessions_file = (PATH + 'clustinator-input.json')
     Main(sessions_file).start()
